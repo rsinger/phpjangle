@@ -178,6 +178,19 @@ class Jangle_Connector_Explain
      *
      * @var array
      **/
-    var $_contextSets;         
+    var $_contextSets;
+    
+    /**
+     * Constructor for a Jangle Explain response object.
+     *
+     * @param string $uri The request URI
+     *
+     * @return Jangle_Connector_Explain
+     * @author Ross Singer
+     **/
+    function __construct($uri)
+    {
+        $this->uri = $uri;
+    }         
 }
 // }}}
