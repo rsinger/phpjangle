@@ -80,7 +80,7 @@ class Jangle_Connector_Explain
      *
      * @var string
      **/
-    var $_shortName;    
+    var $_longName;    
     
     /**
      * A human readable description of the search.  Max length 1024 chars.
@@ -108,14 +108,14 @@ class Jangle_Connector_Explain
      *
      * @var array
      **/
-    var $tags;    
+    var $tags = array();    
     
     /**
      * An associative array to define an icon for this search.
      *
      * @var array
      **/
-    var $_image;    
+    var $_image = array();    
     
     /**
      * An example query string.
@@ -157,21 +157,21 @@ class Jangle_Connector_Explain
      *
      * @var array
      **/
-    var $languages;
+    var $languages = array();
     
     /**
      * The valid input encodings accepted in the search terms.
      *
      * @var array
      **/
-    var $inputEncodings;
+    var $inputEncodings = array();
     
     /**
      * The character encoding of the feed.
      *
      * @var array
      **/
-    var $outputEncodings;
+    var $outputEncodings = array();
     
     /**
      * The SRU Context sets supported by the search.
@@ -192,5 +192,208 @@ class Jangle_Connector_Explain
     {
         $this->uri = $uri;
     }         
+    
+    /**
+     * Sets the _shortName variable.  Value must be a string, 16 characters or less.
+     *
+     * @param string $shortName The short name of the search.
+     *
+     * @return void
+     * @author Ross Singer
+     **/
+    function setShortName($shortName)
+    {
+        if (strlen($shortName) > 16) {
+            throw new InvalidArgumentException("Input must be 16 characters or less
+             in length!");
+        }
+        $this->_shortName = $shortName;
+    }
+    
+    /**
+     * Getter for the search's short name.
+     *
+     * @return string
+     * @author Ross Singer
+     **/
+    function getShortName() 
+    {
+        return $this->_shortName;
+    }
+
+    /**
+     * Sets the _longName variable.  Value must be a string, 48 characters or less.
+     *
+     * @param string $longName The long name of the search.
+     *
+     * @return void
+     * @author Ross Singer
+     **/
+    function setLongName($longName)
+    {
+        if (strlen($longName) > 48) {
+            throw new InvalidArgumentException("Input must be 48 characters or less
+             in length!");
+        }
+        $this->_longName = $longName;
+    }
+    
+    /**
+     * Getter for the search's long name.
+     *
+     * @return string
+     * @author Ross Singer
+     **/
+    function getLongName() 
+    {
+        return $this->_longName;
+    }  
+
+    /**
+     * Sets the _description variable.  Value must be a string, 1024 characters
+     * or less.
+     *
+     * @param string $desc The search description.
+     *
+     * @return void
+     * @author Ross Singer
+     **/
+    function setDescription($desc)
+    {
+        if (strlen($desc) > 1024) {
+            throw new InvalidArgumentException('Input must be 1024 characters or less
+             in length!');
+        }
+        $this->_description = $desc;
+    }
+    
+    /**
+     * Getter for the search's description
+     *
+     * @return string
+     * @author Ross Singer
+     **/
+    function getDescription() 
+    {
+        return $this->_description;
+    } 
+    
+    /**
+     * Sets an image to represent the search service.
+     *
+     * @param string $url    The location of the image.
+     * @param string $type   The content-type of the image file (optional)
+     * @param int    $width  The width, in pixels, of the image (optional)
+     * @param int    $height The height, in pixels, of the image (optional)
+     *
+     * @return void
+     * @author Ross Singer
+     **/
+    function setImage($url, $type=null, $width=null, $height=null)     
+    {
+        $this->_image = array_filter(array('location' => $url, 'type' => $type,
+         'width' => $width, 'height' => $height));
+    }
+    
+    /**
+     * Gets the image attributes as an associative array.
+     *
+     * @return array
+     * @author Ross Singer
+     **/
+    function getImage()
+    {
+        return $this->_image;
+    }
+    
+    /**
+     * Sets the _developer variable.  Value must be a string, 64 characters or less.
+     *
+     * @param string $dev The name of the developer or maintainer
+     *
+     * @return void
+     * @author Ross Singer
+     **/
+    function setDeveloper($dev)
+    {
+        if (strlen($dev) > 64) {
+            throw new InvalidArgumentException("Input must be 64 characters or less
+             in length!");
+        }
+        $this->_developer = $dev;
+    }
+    
+    /**
+     * Getter for the search's developer.
+     *
+     * @return string
+     * @author Ross Singer
+     **/
+    function getDeveloper() 
+    {
+        return $this->_developer;
+    }  
+    
+    /**
+     * Sets the _attribution variable.  Value must be a string,
+     * 256 characters or less.
+     *
+     * @param string $text The attribution text.
+     *
+     * @return void
+     * @author Ross Singer
+     **/
+    function setAttribution($text)
+    {
+        if (strlen($text) > 256) {
+            throw new InvalidArgumentException("Input must be 256 characters or less
+             in length!");
+        }
+        $this->_attribution = $text;
+    }
+    
+    /**
+     * Getter for the attribution string.
+     *
+     * @return string
+     * @author Ross Singer
+     **/
+    function getAttribution() 
+    {
+        return $this->_attribution;
+    }  
+    
+    /**
+     * Sets the search results syndication rights.  Value must be a string,
+     * of the value: "open", "limited", "private" or "closed".
+     *
+     * @param string $syndRight The syndication rights of the feed.
+     *
+     * @return void
+     * @author Ross Singer
+     **/
+    function setSyndicationRight($syndRight)
+    {
+        $valid = array('open', 'limited', 'private', 'closed');
+        if (!in_array(strtolower($syndRight), $valid)) {
+            throw new InvalidArgumentException("Input must be one of: 'open', 
+             'limited', 'private' or 'closed'!");                              
+        }
+
+        $this->_syndicationRight = strtolower($syndRight);
+    }
+    
+    /**
+     * Getter for syndication right.
+     *
+     * @return string
+     * @author Ross Singer
+     **/
+    function getSyndicationRight() 
+    {
+        return $this->_syndicationRight;
+    }    
+    
+    
 }
 // }}}
