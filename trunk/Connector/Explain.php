@@ -178,7 +178,7 @@ class Jangle_Connector_Explain
      *
      * @var array
      **/
-    var $_contextSets;
+    var $_contextSets = array();
     
     /**
      * Constructor for a Jangle Explain response object.
@@ -392,8 +392,252 @@ class Jangle_Connector_Explain
     function getSyndicationRight() 
     {
         return $this->_syndicationRight;
+    }
+    
+    /**
+     * Adds a Context Set to the explain response.
+     *
+     * @param Jangle_Connector_Context_Set $contextSet A context set object
+     *
+     * @return void
+     * @author Ross Singer
+     **/
+    function addContextSet($contextSet)
+    {
+        if (get_class($contextSet) != 'Jangle_Connector_Context_Set') {
+            throw new InvalidArgumentException('Argument must be a
+             Jangle_Connector_Context_Set!');
+        }
+        $this->_contextSets[$contextSet->getName()] = $contextSet;
     }    
     
+    /**
+     * Returns the associative array of context set objects associated with the
+     * search service.  The array keys are the short name attribute of the context
+     * set object.
+     *
+     * @return array
+     * @author Ross Singer
+     **/
+    function getContextSets()
+    {
+        return $this->_contextSets;
+    }   
     
+    /**
+     * Returns a context set object by short name.
+     *
+     * @param string $name Context set short name
+     *
+     * @return Jangle_Connector_Context_Set
+     * @author Ross Singer
+     **/
+    function getContextSetByName($name)
+    {
+        return $this->_contextSets[$name];
+    } 
+    
+    /**
+     * Returns a context set object by identifier URI
+     *
+     * @param string $identifier Context set identifier URI
+     *
+     * @return Jangle_Connector_Context_Set
+     * @author Ross Singer
+     **/
+    function getContextSetByIdentifier($identifier)
+    {
+        foreach ($this->_contextSets as $c) {
+            if ($c->getIdentifier() == $identifier) {
+                return $c;
+            }
+        }
+        
+    }
+    
+    /**
+     * Serializes the explain object as an associative array.
+     *
+     * @return array
+     * @author Ross Singer
+     **/
+    function toArray()
+    {
+        $ary = array('request' => $this->uri, 'type' => $this->_type);
+        if ($this->_shortName) {
+            $ary['shortname'] = $this->_shortName;
+        }
+        if (!isset($this->_description)) {
+            throw new RuntimeException('The description has not been set!');
+        }
+        $ary['description'] = $this->_description;
+        if (!isset($this->template)) {
+            throw new RuntimeException('The search template has not been set!');
+        }
+        $ary['template'] = $this->template;     
+        if ($this->_developer) {
+            $ary['developer'] = $this->_developer;
+        }
+        if ($this->contact) {
+            $ary['contact'] = $this->contact;
+        }
+        
+        if (count($this->tags) > 0) {
+            $ary['tags'] = $this->tags;
+        }
+        if ($this->_longName) {
+            $ary['longname'] = $this->_longName;
+        }
+        
+        if (count($this->_image) > 0) {
+            $ary['image'] = $this->_image;
+        }
+        
+        if ($this->_attribution) {
+            $ary['attribution'] = $this->_attribution;
+        }
+        
+        if ($this->_syndicationRight) {
+            $ary['syndicationright'] = $this->_syndicationRight;
+        }
+        if (isset($this->adultContent)) {
+            $ary['adultcontent'] = $this->adultContent;
+        }
+        
+        if (count($this->languages) > 0) {
+            $ary['language'] = $this->languages;
+        }
+        if (count($this->inputEncodings) > 0) {
+            $ary['inputencodings'] = $this->inputEncodings;
+        }
+        if (count($this->outputEncodings) > 0) {
+            $ary['outputencodings'] = $this->outputEncodings;
+        }
+        
+        if ($this->exampleQuery || count($this->_contextSets) > 0) {
+            $ary['query'] = array();
+            if ($this->exampleQuery) {
+                $ary['query']['example'] = $this->exampleQuery;
+            }
+            foreach ($this->_contextSets as $c) {
+                if (!$ary['query']['context-sets']) {
+                    $ary['query']['context-sets'] = array();
+                }
+                array_push($ary['query']['context-sets'], $c->toArray());
+            }
+        }
+        return $ary;
+    }
+    
+    /**
+     * Serializes the object as a Jangle API JSON explain response
+     *
+     * @return string
+     * @author Ross Singer
+     **/
+    function toJSON()
+    {
+        return json_encode($this->toArray());
+    }
+}
+// }}}
+
+
+// {{{ Jangle_Connector_Context_Set
+/**
+ * A Jangle Connector Context Set (CQL Search Description) object.
+ *
+ * This will provide the basic structure of a Jangle 'explain' response.
+ * It (currently) has no capability of being extended beyond the Jangle 
+ * specification.  If you need to do that, it would probably make sense 
+ * to subclass it.
+ *
+ * Usage:  
+ *  $contextSet = new Jangle_Connector_Context_Set('dc',
+ *   'info:srw/cql-context-set/1/dc-v1.1');
+ *  array_push($contextSet->indexes, 'title');
+ *
+ * @category  Services
+ * @package   Jangle
+ * @author    Ross Singer <rossfsinger@gmail.com>
+ * @copyright 2008-2009 Talis Information Limited
+ * @license   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GPL v. 2.0
+ * @version   Release: @package_version@
+ * @link      http://code.google.com/p/jangle
+ */
+class Jangle_Connector_Context_Set
+{
+    /**
+     * The short name of the context set
+     *
+     * @var string
+     **/
+    var $_name;
+    
+    /**
+     * The identifier URI for the context set
+     *
+     * @var string
+     **/
+    var $_identifier;
+    
+    /**
+     * The indexes available to search from this context set.
+     *
+     * @var array
+     **/
+    var $indexes = array();
+    
+    /**
+     * Creates a new Context Set object
+     *
+     * @param string $name       The short name of the context set
+     * @param string $identifier The context set's identifier URI
+     *
+     * @return Jangle_Connector_Context_Set
+     * @author Ross Singer
+     **/
+    function __construct($name, $identifier)
+    {
+        $this->_name       = $name;
+        $this->_identifier = $identifier;
+    }
+    
+    /**
+     * Getter for Context Set name
+     *
+     * @return string
+     * @author Ross Singer
+     **/
+    function getName()
+    {
+        return $this->_name;
+    }
+    
+    /**
+     * Getter for Context Set identifier
+     *
+     * @return string
+     * @author Ross Singer
+     **/
+    function getIdentifier()
+    {
+        return $this->_identifier;
+    }
+        
+    /**
+     * Serializes the context set object into an associative array.
+     *
+     * @return array
+     * @author Ross Singer
+     **/
+    function toArray()
+    {
+        $ary = array('name' => $this->_name, 'identifier' => $this->_identifier);
+        if (count($this->indexes) > 0) {
+            $ary['indexes'] = $this->indexes;
+        }
+        return $ary;
+    }
 }
 // }}}
