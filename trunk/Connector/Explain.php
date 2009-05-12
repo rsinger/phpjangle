@@ -467,10 +467,10 @@ class Jangle_Connector_Explain
         if ($this->_shortName) {
             $ary['shortname'] = $this->_shortName;
         }
-        if (!isset($this->_description)) {
-            throw new RuntimeException('The description has not been set!');
+        if ($this->_description) {
+            $ary['description'] = $this->_description;
         }
-        $ary['description'] = $this->_description;
+        
         if (!isset($this->template)) {
             throw new RuntimeException('The search template has not been set!');
         }
