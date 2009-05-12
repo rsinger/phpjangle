@@ -108,5 +108,51 @@ class Jangle_Connector_ExplainTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->explain->toArray(), $explain);
     }
     
+    function testExceptions()
+    {
+        $fh = fopen('data/marc.xml', 'r');
+        $txt = fread($fh, filesize('data/marc.xml'));        
+        $testVals = array('setShortName' => 'A short name that is not quite short enough.',
+            'setLongName' => 'A long name that is quite a bit too long to be considered acceptable.',
+            'setDeveloper' => 'Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch McGillicuddy',
+            'setDescription' => $txt,
+            'setAttribution' => 'All rights reserved by the Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch McGillicuddy
+            Corporation and its officially registered subsidiaries.  Please direct all feedback, requests, inquiries and subpoenas
+             to 1234 Fake Ave. Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch, Wales',
+            'setSyndicationRight' => 'blue',
+            'addContextSet' => 'info:srw/cql-context-set/1/dc-v1.1'
+        );
+        foreach (array_keys($testVals) as $function) {
+            $this->checkInvalidArgumentException($function, $testVals[$function]);
+        }
+        $this->populateExplain();
+        unset($this->explain->template);
+        $testVals = array('toArray' => null);
+        foreach (array_keys($testVals) as $function) {
+            $this->checkRuntimeException($function, $testVals[$function]);
+        }        
+
+    }
+    
+    function checkInvalidArgumentException($function, $argument)
+    {
+        try {
+            call_user_func(array($this->explain, $function), $argument);
+        } catch (InvalidArgumentException $expected) {
+            return;
+        }
+        $this->fail('An expected exception for Jangle_Connector_Explain::'.$function.' has not been raised.');
+    }
+    
+    function checkRuntimeException($function, $argument=null)
+    {
+        try {
+            call_user_func(array($this->explain, $function), $argument);
+        } catch (RuntimeException $expected) {
+            return;
+        }
+        $this->fail('An expected exception for Jangle_Connector_Explain::'.$function.' has not been raised.');        
+    }
+    
 }
 ?>
