@@ -97,6 +97,15 @@ class Jangle_Connector_ExplainTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($ary['query']));
         $this->assertArrayHasKey('example', $ary['query']);
         $this->assertEquals('dc:title = dog', $ary['query']['example']);
+        $this->assertArrayHasKey('context-sets', $ary['query']);
+        $this->assertTrue(is_array($ary['query']['context-sets']));
+        $this->assertEquals(2, count($ary['query']['context-sets']));
+        $this->assertEquals(array(), array_diff(array('name' => 'dc', 'identifier'
+          => 'info:srw/cql-context-set/1/dc-v1.1', 'indexes' => array('title',
+          'creator', 'subject', 'identifier')),$ary['query']['context-sets'][0]));
+        $this->assertTrue(is_string($this->explain->toJSON()));
+        $explain = json_decode($this->explain->toJSON(), true);
+        $this->assertEquals($this->explain->toArray(), $explain);
     }
     
 }
