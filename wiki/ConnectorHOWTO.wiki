@@ -1,0 +1,78 @@
+#summary How to use Services_Jangle to build a Jangle connector
+#labels HOWTO,Featured,connector
+
+Services_Jangle provides a set of classes to more easily build the Jangle Connector API responses.
+
+The following is a brief example of how you might use the classes in your application.
+
+= Configuration =
+
+First, you will probably want to create a base, reusable Jangle Connector object to help simplify the creation of your response objects.  To create the connector object, you pass the incoming $_REQUEST array and, optionally (although recommended), an associative array of configuration options.
+
+{{{
+  $connector = new Jangle_Connector($_REQUEST, $opts);
+}}}
+
+Where $opts is an associative array that looks something like:
+
+{{{
+{
+      "serviceName" => "Example Jangle Connector",
+      "recordFormats" => array(
+          "dc" => array( 
+              "uri" => "http://purl.org/dc/elements/1.1/", 
+              "contentType" => "application/rdf+xml"),
+          "marcxml" => array(
+              "uri" => "http://www.loc.gov/MARC21/slim",
+              "contentType" => "text/xml")
+      ),
+      "context-sets" => array(
+          "dc" => "info:srw/cql-context-set/1/dc-v1.1",
+          "rec" => "info:srw/cql-context-set/2/rec-1.1"),
+      "categories" => array(
+          "opac" => "http://jangle.org/vocab/terms#dlf-ilsdi-resource"),
+      "entities" => array(
+          "resources" => array(
+              "title" => "Bibliographic Records",
+              "recordFormats" => array("dc", "marcxml"),
+              "urlTemplate" => "http://example.org/cgi-bin/opac.cgi?bibid={id}",
+              "stylesheets" => array(
+                  "dc" => array(
+                      "feed" => 
+  "http://jangle.googlecode.com/svn/trunk/xsl/AtomMARC21slim2RDFDC.xsl",
+                      "item" =>
+  "http://www.loc.gov/standards/marcxml/xslt/MARC21slim2RDFDC.xsl")),
+              "search" => array()))
+}
+}}}
+
+which seems daunting, but looks a little cleaner as, say, a YAML file:
+
+{{{
+serviceName: Example Jangle Connector
+recordFormats:
+  dc:
+    uri: http://purl.org/dc/elements/1.1/
+    contentType: application/rdf+xml
+  marcxml:
+    uri: http://www.loc.gov/MARC21/slim
+    contentType: text/xml
+
+context-sets:
+  dc: info:srw/cql-context-set/1/dc-v1.1
+  rec: info:srw/cql-context-set/2/rec-1.1
+categories:
+  opac: http://jangle.org/vocab/terms#dlf-ilsdi-resource
+entities:
+  resources:
+    title: Bibliographic Records
+    recordFormats:
+      - dc
+      - marcxml
+    urlTemplate: http://example.org/cgi-bin/opac.cgi?bibid={id}
+    stylesheets:
+      dc:
+        feed: http://jangle.googlecode.com/svn/trunk/xsl/AtomMARC21slim2RDFDC.xsl
+        item: http://www.loc.gov/standards/marcxml/xslt/MARC21slim2RDFDC.xsl
+  search:
+}}}
