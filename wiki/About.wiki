@@ -1,0 +1,10 @@
+#summary About phpjangle and its current state
+#labels Featured,about
+
+= About =
+
+phpjangle is a set of PEAR compliant (although not hosted) set of classes to create and parse [http://jangle.org Jangle] API calls.
+
+Services_Jangle is not intended to provide a turnkey Jangle implementation, but instead ease the development of Jangle services into the framework of your choice.
+
+Currently, Services_Jangle only supports the [http://jangle.org/drupal/spec/1.0/connector_api Connector API].  For a Jangle Core, a starting place might be...
