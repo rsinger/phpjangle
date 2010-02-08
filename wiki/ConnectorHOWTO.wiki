@@ -46,7 +46,7 @@ Where $opts is an associative array that looks something like:
 }
 }}}
 
-which seems daunting, but looks a little cleaner as, say, a YAML file:
+which seems daunting, but looks a little cleaner as, say, YAML:
 
 {{{
 serviceName: Example Jangle Connector
@@ -75,4 +75,7 @@ entities:
         feed: http://jangle.googlecode.com/svn/trunk/xsl/AtomMARC21slim2RDFDC.xsl
         item: http://www.loc.gov/standards/marcxml/xslt/MARC21slim2RDFDC.xsl
   search:
+    ...
 }}}
+
+which is more in line with how the configuration would be set (although, of course, YAML is not a requirement).
