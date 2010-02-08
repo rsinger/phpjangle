@@ -5,4 +5,4 @@ phpjangle is a set of PEAR compliant (although not hosted) set of classes to cre
 
 Services_Jangle is not intended to provide a turnkey Jangle implementation, but instead ease the development of Jangle services into the framework of your choice.
 
-Currently, Services_Jangle only supports the [http://jangle.org/drupal/spec/1.0/connector_api Connector API].  For a Jangle Core, a starting place might be...
+Currently, Services_Jangle only supports the [http://jangle.org/drupal/spec/1.0/connector_api Connector API].  For a Jangle Core, a starting place might be the [http://phpjangle.googlecode.com/files/PHPCore.zip PHPCore] from the main [http://code.google.com/p/jangle Jangle project].
