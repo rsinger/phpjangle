@@ -79,3 +79,10 @@ entities:
 }}}
 
 which is more in line with how the configuration would be set (although, of course, YAML is not a requirement).
+
+With the above, Services_Jangle can now automatically output a services response:
+
+{{{
+
+$services = $connector->createServices();
+echo($services->toJSON());
